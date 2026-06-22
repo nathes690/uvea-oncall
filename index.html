@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UVEA · On Call Now — Hypopyon Triage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EFEBE3;
+    --surface:#FBF9F5;
+    --card-muted:#E7E2D8;
+    --ink:#1A1F1D;
+    --muted:#6C716C;
+    --teal:#1E4B4E;
+    --teal-dark:#16393B;
+    --amber:#B06A2C;
+    --line:#DAD4C9;
+    --shadow:0 1px 2px rgba(26,31,29,.04),0 8px 24px rgba(26,31,29,.05);
+    --radius:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg)}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    padding:0;
+  }
+  .app{max-width:440px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative}
+
+  .wordmark{
+    display:flex;align-items:center;gap:10px;
+    padding:18px 22px 0;
+    font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);
+    flex-wrap:wrap;
+  }
+  .wordmark .div{color:var(--line)}
+  .wordmark .ctx{color:var(--muted);font-weight:600}
+
+  .view{display:none;flex:1;padding:22px 22px 110px;animation:fade .35s ease both}
+  .view.is-active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.view{animation:none}}
+
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+  .eyebrow.amber{color:var(--amber)}
+
+  h1.title{font-size:34px;line-height:1.08;font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
+  h2.title{font-size:26px;line-height:1.12;font-weight:800;letter-spacing:-.01em;margin-bottom:12px}
+  .lede{font-size:16px;color:var(--ink);margin-bottom:22px}
+  .lede.soft{color:var(--muted)}
+
+  .media-img{
+    display:block;width:100%;height:auto;max-width:360px;
+    border-radius:var(--radius);margin:0 auto 24px;border:1px solid var(--line);
+  }
+
+  .btn{
+    display:block;width:100%;border:none;cursor:pointer;font-family:inherit;
+    background:var(--teal);color:#fff;font-size:16px;font-weight:600;letter-spacing:.01em;
+    padding:17px 20px;border-radius:14px;transition:background .15s ease,transform .05s ease;
+    box-shadow:var(--shadow);
+  }
+  .btn:hover{background:var(--teal-dark)}
+  .btn:active{transform:translateY(1px)}
+  .btn.secondary{background:transparent;color:var(--teal);box-shadow:none;font-weight:600;padding:14px 20px;font-size:15px}
+  .btn.secondary:hover{background:rgba(30,75,78,.06)}
+
+  .choices{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+  .choice{
+    text-align:left;width:100%;cursor:pointer;font-family:inherit;
+    background:var(--surface);border:1.5px solid var(--line);border-radius:16px;
+    padding:18px 18px;font-size:15.5px;font-weight:500;color:var(--ink);
+    transition:border-color .15s ease,background .15s ease,transform .05s ease;
+    display:flex;align-items:flex-start;gap:14px;line-height:1.4;
+  }
+  .choice:hover{border-color:var(--teal);background:#fff}
+  .choice:active{transform:translateY(1px)}
+  .choice .dot{flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:var(--teal);margin-top:6px}
+
+  .qtext{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:18px;line-height:1.25}
+
+  .outcome-label{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .outcome-head{font-size:22px;font-weight:800;letter-spacing:-.01em;line-height:1.2;margin-bottom:14px}
+  .callbox{
+    background:var(--teal);color:#fff;border-radius:16px;padding:18px 18px;margin:18px 0;box-shadow:var(--shadow);
+  }
+  .callbox .k{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.7;margin-bottom:6px}
+  .callbox .v{font-size:18px;font-weight:700;line-height:1.25}
+  .reason{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin:20px 0 8px}
+  .reason-body{font-size:15px;color:var(--ink)}
+
+  .seclabel{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin:24px 0 12px}
+  .seclabel.teal{color:var(--teal)}
+  .seclabel.amber{color:var(--amber)}
+  ul.bullets{list-style:none;display:flex;flex-direction:column;gap:11px}
+  ul.bullets li{position:relative;padding-left:20px;font-size:15px;color:var(--ink)}
+  ul.bullets li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;}
+  ul.bullets.teal li::before{background:var(--teal)}
+  ul.bullets.amber li::before{background:var(--amber)}
+
+  .disclaimer{
+    background:var(--card-muted);border-radius:14px;padding:16px 16px;margin-top:26px;
+    font-size:13px;color:var(--muted);line-height:1.5;
+  }
+
+  .back{
+    background:none;border:none;cursor:pointer;font-family:inherit;color:var(--muted);
+    font-size:14px;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-bottom:18px;padding:4px 0;
+  }
+  .back:hover{color:var(--ink)}
+
+  .footer{
+    position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;
+    display:flex;border-top:1px solid var(--line);background:rgba(239,235,227,.92);
+    backdrop-filter:saturate(140%) blur(8px);
+  }
+  .footer button{
+    flex:1;background:none;border:none;cursor:pointer;font-family:inherit;
+    padding:14px 8px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+    transition:color .15s ease;
+  }
+  .footer button.active{color:var(--teal)}
+  .footer button:hover{color:var(--ink)}
+
+  :focus-visible{outline:2.5px solid var(--teal);outline-offset:2px;border-radius:4px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="wordmark">
+    <span>UVEA</span><span class="div">/</span><span>On Call Now</span>
+    <span class="div" id="crumbDiv" hidden>/</span><span class="ctx" id="crumb"></span>
+  </div>
+
+  <section class="view is-active" id="view-home">
+    <div class="eyebrow">Triage Module</div>
+    <h1 class="title">Hypopyon Triage</h1>
+    <p class="lede">A patient has a hypopyon. What is the most important thing this could be tonight — and who do you call?</p>
+    <img class="media-img" src="hypopyon.jpg" alt="Layered hypopyon in the anterior chamber">
+    <button class="btn" onclick="startTriage()">Begin triage</button>
+    <button class="btn secondary" onclick="show('about')">What this is &amp; isn't</button>
+    <div class="disclaimer">UVEA is an educational resource designed to support resident learning. It is not intended to replace clinical judgment, attending consultation, or institutional protocols.</div>
+  </section>
+
+  <section class="view" id="view-triage">
+    <button class="back" onclick="triageBack()">← Back</button>
+    <div id="triage-body"></div>
+  </section>
+
+  <section class="view" id="view-about">
+    <button class="back" onclick="show('home')">← Back</button>
+    <div class="eyebrow">About / Scope</div>
+    <h2 class="title">About On Call Now</h2>
+    <p class="lede soft">Short, tappable triage modules for residents responding to uveitis-related calls. Built to help you recognize and escalate — fast.</p>
+
+    <div class="seclabel teal">What it does</div>
+    <ul class="bullets teal">
+      <li>Helps you separate time-critical infection from severe sterile inflammation</li>
+      <li>Points you toward the right service to contact</li>
+      <li>Shows the reasoning behind each recommendation</li>
+    </ul>
+
+    <div class="seclabel amber">What it doesn't do</div>
+    <ul class="bullets amber">
+      <li>Recommend drugs, doses, or specific treatments</li>
+      <li>Analyze images or replace examination findings</li>
+      <li>Stand in for attending consultation or local protocols</li>
+    </ul>
+
+    <div class="disclaimer">UVEA is an educational resource designed to support resident learning. It is not a substitute for clinical judgment, attending consultation, or institutional protocols.</div>
+  </section>
+
+  <nav class="footer">
+    <button id="nav-home" class="active" onclick="show('home')">Begin</button>
+    <button id="nav-about" onclick="show('about')">About</button>
+  </nav>
+
+</div>
+
+<script>
+function show(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('is-active'));
+  document.getElementById('view-'+name).classList.add('is-active');
+  document.getElementById('nav-home').classList.toggle('active', name!=='about');
+  document.getElementById('nav-about').classList.toggle('active', name==='about');
+  setCrumb(name==='triage' ? 'Hypopyon Triage' : '');
+  window.scrollTo(0,0);
+}
+function setCrumb(text){
+  document.getElementById('crumb').textContent = text || '';
+  document.getElementById('crumbDiv').hidden = !text;
+}
+
+/* ---------- Triage decision tree ----------
+   EDIT THIS OBJECT to set your real clinical pathways.
+   Each node is either a QUESTION (has q + options) or an OUTCOME (has outcome). */
+const TREE = {
+  start:{
+    q:"Start with the history. Which of these fits best?",
+    options:[
+      {label:"Recent intraocular surgery, intravitreal injection, or open-globe trauma", next:"o_postop"},
+      {label:"A corneal ulcer or infiltrate is present", next:"o_keratitis"},
+      {label:"None of the above — eye is structurally intact, no recent procedure", next:"q_systemic"}
+    ]
+  },
+  q_systemic:{
+    q:"Any of these in the broader picture?",
+    options:[
+      {label:"Known HLA-B27 / recurrent acute anterior uveitis, or Behçet features", next:"o_sterile"},
+      {label:"Immunocompromised, indwelling line, recent bloodstream infection, or IV drug use", next:"o_endogenous"},
+      {label:"Unclear — can't confidently place it tonight", next:"o_unclear"}
+    ]
+  },
+  o_postop:{
+    outcome:true,
+    label:"Highest concern tonight",
+    head:"Treat as post-procedural / post-traumatic endophthalmitis until proven otherwise.",
+    call:"On-call ophthalmology / retina — now",
+    reason:"A hypopyon after surgery, injection, or open-globe trauma is infection until proven otherwise, and the window to act is short. This is the time-critical branch: escalate before anything else."
+  },
+  o_keratitis:{
+    outcome:true,
+    label:"What this likely is",
+    head:"Microbial keratitis with a reactive hypopyon — the ulcer is the emergency, not the layered cells.",
+    call:"Cornea service / on-call ophthalmology",
+    reason:"The hypopyon here is usually a sterile reaction to the corneal infection. The priority is the ulcer itself, so route to the service that manages the cornea tonight."
+  },
+  o_sterile:{
+    outcome:true,
+    label:"What this likely is",
+    head:"Sterile inflammatory hypopyon — severe anterior uveitis rather than infection.",
+    call:"Uveitis service — urgent, but not the infection pathway",
+    reason:"HLA-B27-associated disease and Behçet can both produce a dramatic hypopyon without infection. It still needs prompt evaluation, but the escalation path differs from a post-procedural eye."
+  },
+  o_endogenous:{
+    outcome:true,
+    label:"High concern tonight",
+    head:"Consider endogenous endophthalmitis — a seeded infection from elsewhere in the body.",
+    call:"On-call ophthalmology + the team managing the systemic source",
+    reason:"In an immunocompromised or bacteremic patient, a hypopyon can mark blood-borne infection reaching the eye. Treat as time-critical and loop in both ophthalmology and the primary medical team."
+  },
+  o_unclear:{
+    outcome:true,
+    label:"When it isn't clear",
+    head:"If you can't exclude infection tonight, default to the time-critical path.",
+    call:"On-call ophthalmology — discuss now",
+    reason:"Uncertainty is itself a reason to escalate. The cost of missing infectious endophthalmitis is far higher than the cost of an early call, so when in doubt, make the call."
+  }
+};
+
+let path = [];
+
+function startTriage(){
+  path = ['start'];
+  show('triage');
+  renderNode('start');
+}
+function goNode(id){
+  path.push(id);
+  renderNode(id);
+  window.scrollTo(0,0);
+}
+function triageBack(){
+  if(path.length>1){ path.pop(); renderNode(path[path.length-1]); window.scrollTo(0,0); }
+  else { show('home'); }
+}
+function renderNode(id){
+  const n = TREE[id];
+  const body = document.getElementById('triage-body');
+  if(n.outcome){
+    body.innerHTML = `
+      <div class="outcome-label">${n.label}</div>
+      <div class="outcome-head">${n.head}</div>
+      <div class="callbox">
+        <div class="k">Who to call tonight</div>
+        <div class="v">${n.call}</div>
+      </div>
+      <div class="reason">Why</div>
+      <div class="reason-body">${n.reason}</div>
+      <div style="margin-top:26px;display:flex;flex-direction:column;gap:12px">
+        <button class="btn" onclick="startTriage()">Start over</button>
+        <button class="btn secondary" onclick="show('home')">Back to home</button>
+      </div>
+      <div class="disclaimer">Educational triage only — confirm against examination findings, attending input, and local protocols.</div>`;
+  } else {
+    body.innerHTML = `
+      <div class="qtext">${n.q}</div>
+      <div class="choices">
+        ${n.options.map(o=>`<button class="choice" onclick="goNode('${o.next}')"><span class="dot"></span><span>${o.label}</span></button>`).join('')}
+      </div>`;
+  }
+}
+</script>
+</body>
+</html>
