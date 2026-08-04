@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UTV Intro</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #0f2a33;
+    overflow: hidden;
+    font-family: -apple-system, "Public Sans", system-ui, sans-serif;
+  }
+  #wrap { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  video { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  /* Big tap-to-start overlay (needed because the video has SOUND) */
+  #start {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(15,42,51,0.85); color: #fff; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #start .btn {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.9rem 1.6rem; border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 999px; font-size: 1.05rem; letter-spacing: 0.02em;
+  }
+  #start .tri {
+    width: 0; height: 0; border-left: 14px solid #fff;
+    border-top: 9px solid transparent; border-bottom: 9px solid transparent;
+  }
+
+  /* Continue button, revealed when the video ends */
+  #continue {
+    position: fixed; left: 0; right: 0; bottom: 24px;
+    display: none; justify-content: center;
+  }
+  #continue a {
+    text-decoration: none; color: #0f2a33; background: #6fd3c7;
+    padding: 0.85rem 1.6rem; border-radius: 12px; font-weight: 600; font-size: 1rem;
+  }
+</style>
+</head>
+<body>
+  <div id="wrap">
+    <video id="v" playsinline preload="auto"
+           src="https://nathes690.github.io/uvea-oncall/utv-intro.mp4">
+    </video>
+  </div>
+
+  <div id="start"><div class="btn"><span class="tri"></span>Play intro</div></div>
+
+  <div id="continue"><a id="go" href="#">Continue to lectures →</a></div>
+
+  <script>
+    var v = document.getElementById('v');
+    var start = document.getElementById('start');
+    var cont = document.getElementById('continue');
+
+    // Sound-on video needs a user gesture: the Play button provides it.
+    start.addEventListener('click', function () {
+      start.style.display = 'none';
+      v.play();
+    });
+
+    // When the intro finishes, reveal the Continue button.
+    v.addEventListener('ended', function () {
+      cont.style.display = 'flex';
+    });
+
+    // Optional deep-link target set by Glide (see notes).
+    // If you pass ?next=<url> the button will point there.
+    var params = new URLSearchParams(location.search);
+    var next = params.get('next');
+    if (next) { document.getElementById('go').setAttribute('href', next); }
+  </script>
+</body>
+</html>
